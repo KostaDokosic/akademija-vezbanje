@@ -1,4 +1,11 @@
-import { Column, Model, Table } from "sequelize-typescript";
+import {
+  Column,
+  Model,
+  NotEmpty,
+  AllowNull,
+  Table,
+  Unique,
+} from "sequelize-typescript";
 
 @Table({
   tableName: "users",
@@ -6,9 +13,25 @@ import { Column, Model, Table } from "sequelize-typescript";
   paranoid: true,
 })
 class User extends Model {
-  @Column declare userName: string;
-  @Column declare email: string;
-  @Column declare password: string;
+  @Unique @AllowNull(false) @NotEmpty @Column declare userName: string;
+  @Unique @AllowNull(false) @NotEmpty @Column declare email: string;
+  @AllowNull(false) @NotEmpty @Column declare password: string;
+
+  public static async doesEmailExists(email: string) {
+    const count = await this.count({ where: { email } });
+    return count > 0;
+  }
+  public static async doesUsernameExists(userName: string) {
+    const count = await this.count({ where: { userName } });
+    return count > 0;
+  }
+
+  public get sanitize() {
+    return {
+      userName: this.userName,
+      email: this.email,
+    };
+  }
 }
 
 export default User;
