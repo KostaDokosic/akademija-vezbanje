@@ -1,19 +1,10 @@
 import { Router } from "express";
-import {
-  getUsers,
-  getUser,
-  createUser,
-  updateUser,
-} from "../controllers/users.controller";
-import { checkSchema } from "express-validator";
-import CreateUserValidation from "../validators/create.user.validator";
-import UpdateUserValidation from "../validators/update.user.validator";
+import { getUsers, getUser } from "../controllers/users.controller";
+import isAuth from "../middlewares/auth.middlware";
 
 const usersRouter = Router();
 
-usersRouter.get("/", getUsers);
-usersRouter.get("/:id", getUser);
-usersRouter.post("/", checkSchema(CreateUserValidation), createUser);
-usersRouter.put("/:id", checkSchema(UpdateUserValidation), updateUser);
+usersRouter.get("/", isAuth, getUsers);
+usersRouter.get("/:id", isAuth, getUser);
 
 export default usersRouter;

@@ -6,13 +6,14 @@ import {
   Table,
   Unique,
 } from "sequelize-typescript";
+import { IUser } from "../types/user.types";
 
 @Table({
   tableName: "users",
   timestamps: true,
   paranoid: true,
 })
-class User extends Model {
+class User extends Model implements IUser {
   @Unique @AllowNull(false) @NotEmpty @Column declare userName: string;
   @Unique @AllowNull(false) @NotEmpty @Column declare email: string;
   @AllowNull(false) @NotEmpty @Column declare password: string;
