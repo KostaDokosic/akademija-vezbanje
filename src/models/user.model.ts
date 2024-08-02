@@ -28,6 +28,7 @@ class User extends Model {
 
   public get sanitize() {
     return {
+      id: this.id,
       userName: this.userName,
       email: this.email,
     };

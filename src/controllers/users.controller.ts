@@ -2,29 +2,50 @@ import { Request, Response } from "express";
 import User from "../models/user.model";
 import { validationResult } from "express-validator";
 import { hash } from "bcrypt";
+import { Op } from "sequelize";
 
 const USERS_PER_PAGE = 10;
 
 export async function getUsers(req: Request, res: Response) {
   try {
-    const { page } = req.query;
+    const { page, search, order } = req.query;
     let sanitizedPage = 1;
     if (!isNaN(Number(page))) {
       sanitizedPage = Number(page);
     }
+    let where = {};
+    if (search) {
+      where = {
+        [Op.or]: {
+          userName: {
+            [Op.like]: `%${search}%`,
+          },
+          email: {
+            [Op.like]: `%${search}%`,
+          },
+        },
+      };
+    }
+
+    let orderBy = "ASC";
+    if ((order && order === "DESC") || order === "ASC") {
+      orderBy = order;
+    }
+
     const users = await User.findAll({
       attributes: ["id", "userName", "email"],
       limit: USERS_PER_PAGE,
       offset: USERS_PER_PAGE * (sanitizedPage - 1),
+      where,
+      order: [["id", orderBy]],
     });
     const metadata = {
       page: sanitizedPage,
       perPage: USERS_PER_PAGE,
       total: await User.count(),
     };
-    const sanitizedUsers = users?.map((user) => user.sanitize);
     res.json({
-      data: sanitizedUsers,
+      data: users,
       metadata,
     });
   } catch (e) {
