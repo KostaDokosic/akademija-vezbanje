@@ -19,7 +19,7 @@ export async function signUp(req: Request, res: Response) {
         .status(400)
         .json({ message: "Error while creating user. Please try again." });
 
-    const token = sign(user.sanitize, getSecretToken(), { expiresIn: "1min" });
+    const token = sign(user.sanitize, getSecretToken(), { expiresIn: "1d" });
     res.status(201).json({ ...user.sanitize, token });
   } catch (e) {
     console.error(e);
@@ -38,7 +38,7 @@ export async function signIn(req: Request, res: Response) {
       return res.status(404).json({ message: "Invalid credentials" });
 
     const token = sign(user.sanitize, getSecretToken(), { expiresIn: "1min" });
-    res.status(201).json({ ...user.sanitize, token });
+    res.status(200).json({ ...user.sanitize, token });
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: "Internal Server Error" });

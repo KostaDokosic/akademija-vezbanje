@@ -6,8 +6,8 @@ export default async function connectDatabase() {
     const database = new Sequelize({
       database: process.env.DATABASE_NAME,
       dialect: "mysql",
-      username: process.env.DATABASE_USERNAME,
-      password: process.env.DATABASE_PASSWORD,
+      username: process.env.DATABASE_USERNAME || "root",
+      password: process.env.DATABASE_PASSWORD || "root",
       host: process.env.DATABASE_HOST || "localhost",
       port: Number(process.env.DATABASE_PORT) || 3306,
       logging: false,
